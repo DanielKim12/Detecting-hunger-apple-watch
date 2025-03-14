@@ -46,21 +46,9 @@ def handler(pkt: DataPacket) -> None:
     
     collected_data.append((sensor_timestamp, system_timestamp, heart_rate_raw, heart_rate_cal, gsr_raw, gsr_cal))
 
-def main():
-    # macOS serial port (Using ls /dev/cu.* at terminal) !! You have to check it /dev/cu.Shimmer3-A945)
-    serial_port = Serial('/dev/cu.Shimmer3-8913', DEFAULT_BAUDRATE)
-    shim_dev = ShimmerBluetooth(serial_port)
-    shim_dev.initialize()
-    shim_dev.add_stream_callback(handler)
-    shim_dev.start_streaming()
-    print("start data_streaming")
-    collection_duration = 1800  # seconds 
-    time.sleep(collection_duration)
-    shim_dev.stop_streaming()
-    shim_dev.shutdown()
-
-    first_name = "yechan"
-    session_number = "1_1"
+def save_data():
+    first_name = "gukil"
+    session_number = "2_2"
     
     # Get current date and time
     now = datetime.datetime.now()
@@ -68,14 +56,34 @@ def main():
     time_str = now.strftime('%I%M%p')  # e.g., "1235PM"
     
     # Format the filename with first_name, session_number, date, and time 
-    csv_filename = f"./{first_name}_session{session_number}_{date_str}_{time_str}.csv" # save in your current dir
+    csv_filename = f"./data/gukil/{first_name}_session{session_number}_{date_str}_{time_str}.csv"
+    
     with open(csv_filename, mode="w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(["sensor_timestamp", "system_timestamp", "heart_rate_raw",
                              "heart_rate_calibrated", "gsr_raw", "gsr_calibrated"])
         csv_writer.writerows(collected_data)
     
-    print(f"data {csv_filename} saved.")
+    print(f"\nData saved to {csv_filename}")
 
+def main():
+    try:
+        serial_port = Serial('/dev/cu.Shimmer3-A92D', DEFAULT_BAUDRATE)
+        shim_dev = ShimmerBluetooth(serial_port)
+        shim_dev.initialize()
+        shim_dev.add_stream_callback(handler)
+        shim_dev.start_streaming()
+        print("Start data streaming. Press Ctrl+C to stop and save data.")
+
+        collection_duration = 1800  # seconds
+        time.sleep(collection_duration)
+
+    except KeyboardInterrupt:
+        print("\nKeyboardInterrupt detected! Stopping data collection...")
+    finally:
+        shim_dev.stop_streaming()
+        shim_dev.shutdown()
+        save_data()
+        
 if __name__ == '__main__':
     main()
