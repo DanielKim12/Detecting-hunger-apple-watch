@@ -1,30 +1,31 @@
-# Shimmer Device: HRV & EDA Signal Collection for Hunger vs. Satiety Evaluation
+# Apple Watch: HRV & BPM Signal Collection for Hunger vs. Satiety Evaluation
 
-## Project Overview
+## 📋 Project Overview
 
-This project utilizes the Shimmer sensor to collect Heart Rate Variability (HRV) and Electrodermal Activity (EDA) signals for developing a model that evaluates an individual’s state of hunger vs. satiety. The collected physiological data will be analyzed to identify patterns and biomarkers related to these states.
+This project explores the relationship between physiological signals—specifically **Heart Rate Variability (HRV)** and **Beats Per Minute (BPM)**—and an individual's state of **hunger vs. satiety**. We collect data using the **Apple Watch** and aim to develop a predictive model for detecting these internal states based on biosignals.
 
-## Hardware & Software Requirements
+## 💡 Motivation
 
-### Hardware
-- Shimmer3 GSR+ device (for EDA and HRV signal acquisition)
-- Bluetooth-enabled computer (macOS/Linux recommended)
+Understanding how our physiological signals change between hunger and satiety could help build smarter wellness tracking tools. This project investigates whether biometric signals collected passively via Apple Watch can reveal insights into eating-related states.
 
-### Software
+## 📱 Data Collection
+
+- Device: **Apple Watch**
+- Data Types: 
+  - HRV (Heart Rate Variability)
+  - BPM (Heart Rate)
+- Data Export: Use the **Health app on iPhone** to export Apple Health data (XML or CSV format)
+
+## ⚙️ Software Requirements
+
 - Python 3.x
-- Required Python libraries:
-Refer to the [installation guide](https://github.com/seemoo-lab/pyshimmer/blob/main/README.md) for Pyshimmer setup instructions.
-
-Or use virtual env to run:
-```
-python3 -m venv shimmer_env
-source shimmer_env/bin/activate  # On macOS/Linux
-shimmer_env\Scripts\activate     # On Windows
-pip install pyshimmer numpy pandas matplotlib serial
-```
+- Libraries:
+  - `pandas`
+  - `numpy`
+  - `matplotlib`
 
 ## Contributors:
 - GUK IL KIM 
 - DANIEL SEO 
 - CHANGMUK OH
-- KP [RENAME] 
+- KP 
