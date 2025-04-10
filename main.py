@@ -54,5 +54,5 @@ with open(output_csv_path, "w", newline="") as file:
     writer = csv.writer(file)
     writer.writerows(csv_rows)
 
-print(f"✅ Final CSV with 10-second steps saved: {output_csv_path}")
-print(f"🔢 Total data rows (excluding header): {len(csv_rows) - 1}")
+print(f"Final CSV with 10-second steps saved: {output_csv_path}")
+print(f"Total data rows (excluding header): {len(csv_rows) - 1}")
