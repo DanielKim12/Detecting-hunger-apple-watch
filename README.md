@@ -29,26 +29,26 @@ Can your Apple Watch tell when you’re hungry? This project seeks to answer tha
 1. Place your Apple Health `export.xml` file in the same directory as `main.py`.
 
 2. Open `main.py` and set your desired time window:
-
+modify the number values to match user's start time of the measure, start of eating (make sure to note this value as it will be considered as the start of label transition)
 ```python
 before_eating = datetime.strptime("2025-04-01 11:40:00", "%Y-%m-%d %H:%M:%S")
 after_eating = datetime.strptime("2025-04-01 12:00:00", "%Y-%m-%d %H:%M:%S")
 ```
 
-3.	Run the script using:
+3. Run the script using:
 ```
-python main.py
+python3 main.py
 ```
 
-4.	A CSV file named heart_rate_output.csv will be generated with the following format:
+4. A CSV file named heart_rate_output.csv will be generated with the following format:
 ```
 name,timestamp,heart_rate,label
 ```
 Where:
-	•	label = 0 indicates before eating
-	•	label = 1 indicates after eating
-	•	Time steps are generated every 10 seconds
-	•	If a reading is missing at a given time step, the most recent available heart rate value is carried forward
+- label = 0 indicates before eating
+- label = 1 indicates after eating
+- Time steps are generated every 10 seconds
+- If a reading is missing at a given time step, the most recent available heart rate value is carried forward
 
 The final CSV includes 300 rows for the 5 minutes before eating, and 300 rows for the 50 minutes after eating, totaling 600 labeled rows for model training or analysis.
 
