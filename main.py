@@ -6,12 +6,12 @@ from datetime import datetime, timedelta
 
 # config change this
 input_xml_path = "export.xml"  
-output_csv_path = "data1.csv"
-user_name = "guk il kim"
+output_csv_path = "data7.csv"
+user_name = "yechan seo"
 
 # start time -> started eating, after eating -> label will be 1 started eating
-start_time = datetime.strptime("2025-04-01 11:35:00", "%Y-%m-%d %H:%M:%S")
-after_eating_start = datetime.strptime("2025-04-01 12:00:00", "%Y-%m-%d %H:%M:%S")
+start_time = datetime.strptime("2025-04-17 18:00:00", "%Y-%m-%d %H:%M:%S")
+after_eating_start = datetime.strptime("2025-04-17 18:45:00", "%Y-%m-%d %H:%M:%S")
 end_time = after_eating_start + timedelta(minutes=50)
 
 # parse xml 
