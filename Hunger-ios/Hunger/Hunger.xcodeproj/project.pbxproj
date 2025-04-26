@@ -193,7 +193,11 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1540;
+<<<<<<< HEAD
 				LastUpgradeCheck = 1620;
+=======
+				LastUpgradeCheck = 1540;
+>>>>>>> 3d34d96f0c72ad1a08e5f609893feb70fe14023e
 				TargetAttributes = {
 					B14047D32DB20C0C00B81723 = {
 						CreatedOnToolsVersion = 15.4;
@@ -483,6 +487,10 @@
 		B14047FC2DB20C0E00B81723 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+<<<<<<< HEAD
+=======
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+>>>>>>> 3d34d96f0c72ad1a08e5f609893feb70fe14023e
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -502,6 +510,10 @@
 		B14047FD2DB20C0E00B81723 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+<<<<<<< HEAD
+=======
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+>>>>>>> 3d34d96f0c72ad1a08e5f609893feb70fe14023e
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -521,6 +533,10 @@
 		B14047FF2DB20C0E00B81723 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+<<<<<<< HEAD
+=======
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+>>>>>>> 3d34d96f0c72ad1a08e5f609893feb70fe14023e
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = GV89B25GKL;
@@ -538,6 +554,10 @@
 		B14048002DB20C0E00B81723 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+<<<<<<< HEAD
+=======
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+>>>>>>> 3d34d96f0c72ad1a08e5f609893feb70fe14023e
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = GV89B25GKL;

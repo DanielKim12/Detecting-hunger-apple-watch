@@ -199,5 +199,3 @@ struct FilledButtonStyle: ButtonStyle {
             .cornerRadius(10)
     }
 }
-
-
