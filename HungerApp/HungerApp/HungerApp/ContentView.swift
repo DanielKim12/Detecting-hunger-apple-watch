@@ -4,40 +4,46 @@ import Combine
 
 struct ContentView: View {
 
-    // 세션
+    // Session
     @StateObject private var wc = WCSessionManager.shared
     @State private var bag = Set<AnyCancellable>()
 
-    // UI 상태
-    @State private var modelOutput: Int? = nil      // 0 hungry / 1 not-hungry
+    // UI
+    @State private var modelOutput: Int? = nil      // 1 hungry / 0 not-hungry
     @State private var showPrompt  = false
     @State private var showFollow  = false
     @State private var showResults = false
     @State private var followMsg   = ""
     @State private var showLoading = true
 
-    // 통계
+    // Stat
     @State private var total = 0
     @State private var correct = 0
     @State private var accuracy = 0.0
     @State private var history: [AccuracyEntry] = []
 
-    // 제안
+    // Suggest
     @State private var suggestion = FoodSuggestion(name:"", tip:"")
     @State private var showMoreSuggestion = false
 
     private let foods:[FoodSuggestion] = [
-        .init(name:"Avocado Toast 🥑",tip:"Healthy fats & fiber."),
-        .init(name:"Greek Yogurt 🍓", tip:"Protein & antioxidants."),
-        .init(name:"Chicken Salad 🥗",tip:"Lean protein & greens."),
-        .init(name:"Oatmeal 🍌",      tip:"Slow carbs + potassium.")
+        .init(name: "Avocado Toast 🥑", tip: "Rich in healthy fats and fiber, good for heart and digestion."),
+        .init(name: "Greek Yogurt with Berries 🍓", tip: "High in protein and antioxidants for muscle repair."),
+        .init(name: "Grilled Chicken Salad 🥗", tip: "Packed with lean protein and leafy greens for recovery."),
+        .init(name: "Hummus and Veggie Wrap 🌯", tip: "A balanced combo of fiber and plant protein."),
+        .init(name: "Oatmeal with Nuts and Banana 🍌", tip: "Great source of energy and potassium."),
+        .init(name: "Tofu Stir Fry 🍜", tip: "High in plant protein, great for muscle and bones."),
+        .init(name: "Fruit Smoothie 🥤", tip: "Hydrating and rich in vitamins A, C and natural sugars."),
+        .init(name: "Hard-boiled Eggs 🥚", tip: "Loaded with high-quality protein and vitamin D."),
+        .init(name: "Cottage Cheese with Pineapple 🍍", tip: "Good mix of casein protein and vitamin C."),
+        .init(name: "Edamame 🌱", tip: "High in protein and iron—great pre/post workout snack.")
     ]
 
     // 연결 배너
     private var banner: some View {
         VStack(spacing: 4){
-            Text(wc.reachable ? "Connected ✅"
-                              : "Not Connected")
+            Text(wc.reachable ? "⌚️ Connected ✅"
+                              : "⌚️ Not Connected ⛔️")
                 .font(.headline.weight(.bold))
                 .foregroundColor(wc.reachable ? .green : .red)
             if !wc.reachable {
@@ -63,12 +69,11 @@ struct ContentView: View {
                     Text("⏳ Waiting for your heart-rate window…")
                         .foregroundColor(.gray)
                 }
-
                 // Yes/No 프롬프트
                 if showPrompt, let out = modelOutput {
                     Text(out == 1
-                         ? "You seem to have eaten recently.\nIs that correct?"
-                         : "It looks like you haven’t eaten.\nHave you?")
+                         ? "It seems like you’re hungry.\n Is this correct?"
+                         : "It seems like you’re NOT hungry.\n Is this correct?")
                         .font(.title2).multilineTextAlignment(.center).padding()
 
                     HStack {
@@ -89,17 +94,16 @@ struct ContentView: View {
                                 Text("🍽  Try: \(suggestion.name)").font(.headline)
                                 Text(suggestion.tip).font(.subheadline).foregroundColor(.gray)
 
-                                if !showMoreSuggestion {
-                                    Button("🔄 Another option"){
-                                        suggestion = foods.randomElement()!
-                                        showMoreSuggestion = true
-                                    }.font(.subheadline)
+                                // 👉 Always show the button
+                                Button("🔄 Another option") {
+                                    suggestion = foods.randomElement()!
                                 }
+                                .font(.subheadline)
                             }
                         }
 
                         HStack{
-                            Button("See Results"){ showResults = true }
+                            Button("See How AI Predicted"){ showResults = true }
                                 .buttonStyle(FilledButtonStyle(color:.blue))
                             Button("Continue"){ reset() }
                                 .buttonStyle(FilledButtonStyle(color:.gray))
@@ -111,7 +115,7 @@ struct ContentView: View {
 
                 // ─── 모델 최신 상태 배지 ───
                 if let out = modelOutput {
-                    Text("Latest model output: \(out==1 ? "Not Hungry" : "Hungry")")
+                    Text("Latest model output: \(out==1 ? "Hungry" : "Not Hungry")")
                         .font(.callout)
                         .foregroundColor(out==1 ? .green : .orange)
                         .padding(.bottom,8)
@@ -123,32 +127,43 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            // 모델 결과 구독
+
             wc.modelPublisher
               .receive(on:RunLoop.main)
               .sink { value in
+                  resetInteractionState()   // ✅ 먼저 현재 인터랙션 상태 리셋
+                  
                   modelOutput = value
                   showLoading = false
                   showPrompt  = true
               }
               .store(in:&bag)
-        }
+        }    }
+    
+    private func resetInteractionState() {
+        showPrompt  = false
+        showFollow  = false
+        showResults = false
+        suggestion  = FoodSuggestion(name:"", tip:"")
+        followMsg   = ""
     }
+    
+
 
     // MARK: – Logic
     private func handleAnswer(_ yes: Bool){
         guard let pred = modelOutput else { return }
         total += 1
-        if (pred==1 && yes)||(pred==0 && !yes) { correct += 1 }
+        if (pred==1 && yes)||(pred==0 && yes) { correct += 1 }
         accuracy = Double(correct)/Double(total)*100
         history.append(.init(attempt: total, percentage: accuracy))
 
-        if pred == 1 { // not-hungry
-            followMsg = yes ? "✅ Great! Let's take a walk."
-                            : "📝 Thanks for letting us know!"
-        } else {       // hungry
-            followMsg = yes ? "🚶 Maybe move a bit."
-                            : "👨‍🍳 Let me suggest a snack!"
+        if pred == 1 { // hungry
+            followMsg = yes ? "✅ Let me suggest healthy meal choices!"
+                            : "❌ Thanks for letting me know! \n How about a short walk to help your digestion?"
+        } else {       // not-hungry
+            followMsg = yes ? "✅ Great. Take a short walk to help your digestion and awaken your brain"
+                            : "❌ Thanks for letting me know! \n Let me suggest healthy meal choices."
             if !yes { suggestion = foods.randomElement()! }
         }
 
@@ -166,7 +181,7 @@ struct ContentView: View {
     }
 }
 
-///////////////////////////////////////////////////////////////
+///
 struct FoodSuggestion { let name:String; let tip:String }
 
 struct AccuracyEntry: Identifiable {
@@ -189,7 +204,7 @@ struct ResultsView: View {
     var body: some View{
         NavigationStack{
             VStack(spacing:16){
-                Text("📊 Your Results").font(.largeTitle)
+                Text("📊 Prediction Accuracy").font(.largeTitle)
                 Text("Accuracy \(String(format:"%.1f",accuracy)) %")
                     .font(.headline)
                 Chart(history){ e in
@@ -204,80 +219,3 @@ struct ResultsView: View {
 
 import Charts
 
-//import SwiftUI
-//import Combine
-//
-///// iPhone-side main screen
-//struct ContentView: View {
-//    @StateObject private var wc = WCSessionManager.shared          // WCSession status + publisher
-//
-//    // UI-state
-//    @State private var lastValues: [Double] = []                   // 최근 60 s BPM 배열
-//    @State private var averageBPM: Double?
-//    @State private var sampleCount = 0
-//
-//    // Combine token
-//    @State private var cancellable: AnyCancellable?
-//
-//    var body: some View {
-//        VStack(spacing: 24) {
-//
-//            // ▪ Watch Status + Refresh ▪
-//            HStack(spacing: 12) {
-//                Label {
-//                    Text(wc.reachable ? "Connected" : "Not Connected")
-//                } icon: {
-//                    Image(systemName: wc.reachable
-//                                    ? "checkmark.circle.fill"
-//                                    : "xmark.circle.fill")
-//                        .foregroundColor(wc.reachable ? .green : .red)
-//                }
-//                .font(.title2)
-//
-//                Button {
-//                    wc.refreshStatus()                                 // 수동 연결 확인
-//                } label: {
-//                    Image(systemName: "arrow.clockwise")
-//                }
-//                .buttonStyle(.bordered)
-//            }
-//
-//            Text("Heart-rate window auto-updates every 60 s")
-//                .font(.subheadline)
-//                .foregroundColor(.secondary)
-//
-//            // ▪ Latest window summary ▪
-//            if let avg = averageBPM {
-//                VStack {
-//                    Text("Latest Window").font(.headline)
-//                    Text("Avg BPM: \(avg, specifier: "%.1f")")
-//                    Text("Count : \(sampleCount) samples")
-//                        .foregroundColor(.secondary)
-//                }
-//            }
-//
-//            // ▪ Sample list ▪
-//            if !lastValues.isEmpty {
-//                List(lastValues.indices, id: \.self) { idx in
-//                    Text(String(format: "%.1f bpm", lastValues[idx]))
-//                }
-//                .frame(height: 160)
-//            }
-//        }
-//        .padding()
-//        .onAppear {
-//            // 구독 – 60 s마다 Watch → iPhone 윈도우 수신
-//            cancellable = wc.hrvPublisher
-//                .receive(on: RunLoop.main)
-//                .sink { arr in
-//                    lastValues  = arr
-//                    sampleCount = arr.count
-//                    averageBPM  = arr.average
-//                }
-//        }
-//    }
-//}
-//
-//private extension Array where Element == Double {
-//    var average: Double { isEmpty ? .nan : reduce(0, +) / Double(count) }
-//}
